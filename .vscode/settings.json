@@ -1,4 +1,7 @@
 {
     "javascript.format.semicolons": "insert",
-    "typescript.format.semicolons": "insert"
+    "typescript.format.semicolons": "insert",
+    "editor.autoClosingDelete": "always",
+    "javascript.preferences.quoteStyle": "double",
+    "typescript.preferences.quoteStyle": "double"
 }
