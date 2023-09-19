@@ -1,9 +1,9 @@
 import { Injectable } from '@nestjs/common';
-import { CreateUserDto } from './dto/create-user.dto';
 import { User } from '@prisma/client';
-import { UpdateUserDto } from './dto/update-user.dto';
 import { PrismaService } from '@prisma/prisma.service';
-import { genSalt, genSaltSync, hashSync } from 'bcrypt';
+import { genSaltSync, hashSync } from 'bcrypt';
+import { Logger } from '@nestjs/common';
+
 
 @Injectable()
 export class UserService {
@@ -21,10 +21,12 @@ export class UserService {
     })
   }
 
-  findOne(idOrEmail: string) {
+  findOne(identity: string) {
+    Logger.warn('info', identity)
+    
     return this.prismaService.user.findFirst({
       where: {
-        OR: [{ id: idOrEmail }, { email: idOrEmail }]
+        OR: [{ id: identity }, { email: identity }]
       }
     })
   }

@@ -12,8 +12,8 @@ export class UserController {
     return this.userService.create(dto);
   }
 
-  @Get("idOrEmail")
-  fetchUser(@Param("idOrEmail") idOrEmail: string) {
+  @Get(":identity")
+  fetchUser(@Param("identity") idOrEmail: string) {
     return this.userService.findOne(idOrEmail);
   }
 
