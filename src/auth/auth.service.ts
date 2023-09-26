@@ -19,20 +19,13 @@ export class AuthService {
   ) {}
 
   async refreshTokens(refreshToken: string): Promise<Tokens> {
-    const token = await this.prismaService.token.delete({
-      where: {
-        token: refreshToken,
-      },
-    });
-
-    if (!token) {
-      throw new UnauthorizedException();
+    const token = await this.prismaService.token.delete({ where: { token: refreshToken } });
+    if (!token || new Date(token.expiredAt) < new Date()) {
+        throw new UnauthorizedException();
     }
-
     const user = await this.userService.findOne(token.userId);
-
     return this.generateTokens(user);
-  }
+}
 
   async registration(dto: SignupDto) {
     const user: User = await this.userService.findOne(dto.email).catch((err) => {

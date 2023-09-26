@@ -4,6 +4,7 @@ import {
   Controller,
   Get,
   HttpStatus,
+  Logger,
   Post,
   Res,
   UnauthorizedException,
@@ -19,6 +20,7 @@ const REFRESH_TOKEN = "refreshtoken";
 
 @Controller("auth")
 export class AuthController {
+  private readonly logger = new Logger(AuthController.name);
   constructor(
     private readonly authService: AuthService,
     private readonly configService: ConfigService,
@@ -43,10 +45,9 @@ export class AuthController {
 
   @Get("refresh-tokens")
   async refreshTokens(@Cookie(REFRESH_TOKEN) refreshToken: string, @Res() res: Response) {
-    if (!refreshToken) {
+    if (!refreshToken || typeof(refreshToken) != "string") {
       throw new UnauthorizedException();
     }
-
     const tokens = await this.authService.refreshTokens(refreshToken)
 
     if (!tokens) {
