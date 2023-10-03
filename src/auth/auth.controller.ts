@@ -6,13 +6,14 @@ import {
   HttpStatus,
   Logger,
   Post,
+  Req,
   Res,
   UnauthorizedException,
 } from "@nestjs/common";
 import { SigninDto, SignupDto } from "./dto";
 import { AuthService } from "./auth.service";
 import { Tokens } from "./interfaces";
-import { Response } from "express";
+import { Response, Request } from "express";
 import { ConfigService } from "@nestjs/config";
 import { Cookie } from "@shared/decorators";
 
@@ -35,7 +36,9 @@ export class AuthController {
   }
 
   @Post("signin")
-  async signin(@Body() dto: SigninDto, @Res() res: Response) {
+  async signin(@Body() dto: SigninDto, @Res() res: Response, @Req() req: Request) {
+    const agent = req.header["user-agent"]
+    console.log({ agent })
     const tokens = await this.authService.login(dto);
     if (!tokens) {
       throw new BadRequestException(`Couldn't find an user with ${JSON.stringify(dto)}`);
@@ -56,7 +59,6 @@ export class AuthController {
 
     this.setRefreshTokenToCookies(tokens, res);
   }
-
   private setRefreshTokenToCookies(tokens: Tokens, res: Response) {
     if (!tokens) {
       throw new UnauthorizedException();
