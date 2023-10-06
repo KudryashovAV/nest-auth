@@ -26,6 +26,7 @@ model Token {
   token     String   @unique
   expiredAt DateTime @map("expired_at")
   user      User     @relation(fields: [userId], references: [id])
+  userAgent String @map("user_agent")
   userId    String
 
   @@map("tokens")

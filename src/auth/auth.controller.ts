@@ -6,7 +6,6 @@ import {
   HttpStatus,
   Logger,
   Post,
-  Req,
   Res,
   UnauthorizedException,
 } from "@nestjs/common";
@@ -15,7 +14,7 @@ import { AuthService } from "./auth.service";
 import { Tokens } from "./interfaces";
 import { Response, Request } from "express";
 import { ConfigService } from "@nestjs/config";
-import { Cookie } from "@shared/decorators";
+import { Cookie, UserAgent } from "@shared/decorators";
 
 const REFRESH_TOKEN = "refreshtoken";
 
@@ -36,10 +35,8 @@ export class AuthController {
   }
 
   @Post("signin")
-  async signin(@Body() dto: SigninDto, @Res() res: Response, @Req() req: Request) {
-    const agent = req.header["user-agent"]
-    console.log({ agent })
-    const tokens = await this.authService.login(dto);
+  async signin(@Body() dto: SigninDto, @Res() res: Response, @UserAgent() agent: string) {
+    const tokens = await this.authService.login(dto, agent);
     if (!tokens) {
       throw new BadRequestException(`Couldn't find an user with ${JSON.stringify(dto)}`);
     }
@@ -47,11 +44,11 @@ export class AuthController {
   }
 
   @Get("refresh-tokens")
-  async refreshTokens(@Cookie(REFRESH_TOKEN) refreshToken: string, @Res() res: Response) {
-    if (!refreshToken || typeof(refreshToken) != "string") {
+  async refreshTokens(@Cookie(REFRESH_TOKEN) refreshToken: string, @Res() res: Response, @UserAgent() agent: string) {
+    if (!refreshToken || typeof refreshToken != "string") {
       throw new UnauthorizedException();
     }
-    const tokens = await this.authService.refreshTokens(refreshToken)
+    const tokens = await this.authService.refreshTokens(refreshToken, agent);
 
     if (!tokens) {
       throw new UnauthorizedException();
