@@ -20,7 +20,8 @@ export class JwtStrategy extends PassportStrategy(Strategy) {
   }
 
   async validate(payload: JWTPayload) {
-    const user = await this.userService.findOne(payload.id).catch((error) => {
+    this.logger.warn(payload)
+    const user = await this.userService.findOne(payload.email).catch((error) => {
       this.logger.error(error);
     });
     if (!user) {
