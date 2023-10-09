@@ -14,10 +14,11 @@ import { AuthService } from "./auth.service";
 import { Tokens } from "./interfaces";
 import { Response, Request } from "express";
 import { ConfigService } from "@nestjs/config";
-import { Cookie, UserAgent } from "@shared/decorators";
+import { Cookie, Public, UserAgent } from "@shared/decorators";
 
 const REFRESH_TOKEN = "refreshtoken";
 
+@Public()
 @Controller("auth")
 export class AuthController {
   private readonly logger = new Logger(AuthController.name);
